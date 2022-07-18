@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1658122613 source:e:\study\github\new projectc\main.cpp
+	<iostream>
+	<fstream>
+	"Headers.h"
+
+1658122563 source:e:\study\github\new projectc\functions.cpp
+	<iostream>
+	<fstream>
+	<cstring>
+	<regex>
+	<conio.h>
+	"Headers.h"
+
+1658122563 e:\study\github\new projectc\headers.h
+
