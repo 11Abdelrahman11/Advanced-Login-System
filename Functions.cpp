@@ -7,8 +7,9 @@
 
 using namespace std;
 
-int lastID = 0;
+int lastID = 0; //Important For Updating Program Data
 bool Login = false;
+int loginedID;
 bool validEmail (const string emailAddress){
     regex validMail ("[a-zA-Z0-9]+[@][a-zA-Z]+[.][a-zA-Z]+([.][a-zA-Z])*");
     return regex_match(emailAddress, validMail);
@@ -218,11 +219,12 @@ void Registration (USERDATA& u, USERDATA data[]){
     while (!validMobileNumber(u.mobileNumber) || repeatedMobileNumber(data, u.mobileNumber)){
         cout << "Sorry That is not a Valid Mobile Number" << endl;
         cout << "Enter a Valid Mobile Number: ";
-        cin >> u.firstName;
+        cin >> u.mobileNumber;
     }
     u.ID = lastID + 1;
     lastID++;
     cout << "Done!" << endl;
+    system("Pause");
 }
 
 void login (USERDATA data[]){
@@ -236,7 +238,8 @@ void login (USERDATA data[]){
         if (data[i].userName == userName){
             if (data[i].Password == Password){
                 Login = true;
-                cout << "Welcome " << data[i].firstName << endl;
+                cout << "Welcome " << data[i].firstName << flush;
+                loginedID = data[i].ID;
             }
             else{
                 while (data[i].Password == Password && tries < 4){
@@ -320,31 +323,73 @@ void loadData (ifstream& file, USERDATA u[]){
             counter = 1;
         }
     }
-    cout << "Finished Loading!" << endl;
+    //cout << "Finished Loading!" << endl;
     if(!emptyFile){
         lastID = u[arrCounter - 1].ID;
     }
-    cout << "Last ID: " << lastID << endl;
+    //cout << "Last ID: " << lastID << endl;
+}
+
+void changePassword (USERDATA& u){
+    string oldPassword, newPassword;
+    cout << "Enter Your Old Password: ";
+    oldPassword = hidePassword(oldPassword);
+    cout << "Enter Your New Password: ";
+    cin >> newPassword;
+    if (oldPassword == u.Password && validPassword(newPassword) && powerFulPaswword(newPassword)){
+        u.Password = newPassword;
+        cout << "Done!" << endl;
+        system("Pause");
+    }
+    else{
+        cout << "Insure Your Old Password And Insure That Your New Password Is Powerful And Valid One " << endl;
+        cout << "Powerful Password Must Contain At Least one of (Capital Letter, Small Letter, Number, Special Char) 8 chars at least" << endl;
+        cout << "Please Try Again" << endl;
+        system("Pause");
+    }
+
 }
 
 void displayMenu (ifstream& ifile, ofstream& ofile, USERDATA data[]){
     string answer;
     while (true){
-        cout << "How Could I Help You Sir? " << endl;
-        cout << "1- Registration" << endl;
-        cout << "2- Login" << endl;
-        cout << "0- END" << endl;
-        cin >> answer;
+        if(!Login){
+            cout << "How Could I Help You Sir? " << endl;
+            cout << "1- Registration" << endl;
+            cout << "2- Login" << endl;
+            cout << "0- EXIT" << endl;
+            cin >> answer;
+            system("cls");
 
-        if (answer == "0"){
-            break;
-        }
-        else if (answer == "1"){
-            Registration(data[lastID], data);
-            saveData(ofile, data);
+            if (answer == "0"){
+                break;
+            }
+            else if (answer == "1"){
+                Registration(data[lastID], data);
+                system("cls");
+                saveData(ofile, data);
+            }
+            else{
+                login(data);
+            }
         }
         else{
-            login(data);
+            system("cls");
+            cout << "Welcome " << data[loginedID-1].firstName << endl;
+            cout << "1- Change Password " << endl;
+            cout << "2- Sign Out " << endl;
+            cout << "0- EXIT " << endl;
+            cin >> answer;
+            system("cls");
+            if (answer == "1"){
+                changePassword(data[loginedID-1]);
+            }
+            else if (answer == "2"){
+                Login = false;
+            }
+            else{
+                break;
+            }
         }
     }
     saveData(ofile, data);
